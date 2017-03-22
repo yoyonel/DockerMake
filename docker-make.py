@@ -68,12 +68,16 @@ class DockerMaker(object):
         self.no_cache = no_cache
 
         self.buildargs = {}
-        fname = buildargs
-        print 'READING %s' % os.path.expanduser(fname)
-        with open(fname, 'r') as yaml_file:
-            self.buildargs = yaml.load(yaml_file)
-        #
-        print 'buildargs dict `%s`' % self.buildargs
+        if buildargs:
+            fname = buildargs
+            print 'READING %s' % os.path.expanduser(fname)
+            try:
+                with open(fname, 'r') as yaml_file:
+                    self.buildargs = yaml.load(yaml_file)
+                    #
+            except IOError:
+                print("IOError -> Can't import `%s`" % fname)
+            # print 'buildargs dict `%s`' % self.buildargs
 
     def parse_yaml(self, filename):
         fname = os.path.expanduser(filename)
@@ -451,8 +455,8 @@ def printable_code(c):
 
 def make_arg_parser():
     parser = argparse.ArgumentParser(description="NOTE: Docker environmental variables must be set.\n"
-                                     "For a docker-machine, run "
-                                     "`eval $(docker-machine env [machine-name])`")
+                                                 "For a docker-machine, run "
+                                                 "`eval $(docker-machine env [machine-name])`")
     bo = parser.add_argument_group('Choosing what to build')
     bo.add_argument('TARGETS', nargs="*",
                     help='Docker images to build as specified in the YAML file')
@@ -469,7 +473,8 @@ def make_arg_parser():
                     help="Name for custom docker images (requires --requires)")
 
     bo.add_argument('-b', '--buildargs',
-                    default='buildargs.yml',
+                    # default='buildargs.yml',
+                    type=argparse.FileType('r'),
                     help="YAML file containing build args")
 
     df = parser.add_argument_group('Dockerfiles')
