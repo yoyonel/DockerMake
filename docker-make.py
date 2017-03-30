@@ -69,15 +69,19 @@ class DockerMaker(object):
 
         self.buildargs = {}
         if buildargs:
-            fname = buildargs
-            print 'READING %s' % os.path.expanduser(fname)
-            try:
-                with open(fname, 'r') as yaml_file:
-                    self.buildargs = yaml.load(yaml_file)
-                    #
-            except IOError:
-                print("IOError -> Can't import `%s`" % fname)
+            # fname = buildargs
+            # print 'READING %s' % os.path.expanduser(fname)
+            # try:
+            #     with open(fname, 'r') as yaml_file:
+            #         self.buildargs = yaml.load(yaml_file)
+            #         #
+            # except IOError:
+            #     print("IOError -> Can't import `%s`" % fname)
             # print 'buildargs dict `%s`' % self.buildargs
+
+            # TODO: deal with yaml.load exceptions
+            self.buildargs = yaml.load(buildargs)
+            print 'buildargs dict `%s`' % self.buildargs
 
     def parse_yaml(self, filename):
         fname = os.path.expanduser(filename)
